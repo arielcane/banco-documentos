@@ -8,10 +8,23 @@ use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('files.index');
+        $query = File::query();
+
+        // Si hay una palabra clave, realiza la búsqueda
+        if ($request->has('keyword')) {
+            $query->where('name', 'like', "%{$request->keyword}%")
+                ->orWhere('tags', 'like', "%{$request->keyword}%")
+                ->orWhere('observations', 'like', "%{$request->keyword}%");
+        }
+
+        $files = $query->get();
+
+        return view('files.index', compact('files'));
     }
+
+
 
     public function store(Request $request)
     {
