@@ -35,8 +35,13 @@ class FileController extends Controller
             'file' => 'required|file|mimes:pdf|max:102400', // 100 MB limit
         ]);
 
-        // Almacenamos el archivo en el directorio 'uploads' en el disco 'public'
-        $filePath = $request->file('file')->store('uploads', 'public'); // Esto guarda el archivo en storage/app/public/uploads
+        // Almacenar el archivo en el servidor SFTP
+        try {
+            //$filePath = $request->file('file')->store('uploads', 'sftp');
+            $filePath = $request->file('file')->store('uploads', 'public'); // Esto guarda el archivo en storage/app/public/uploads
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['file' => 'Failed to upload file: ' . $e->getMessage()]);
+        }
 
         // Guardar la información del archivo en la base de datos
         File::create([
@@ -46,6 +51,7 @@ class FileController extends Controller
             'file_path' => $filePath,  // Guardamos la ruta del archivo
         ]);
 
+        //return redirect()->back()->with('success', 'File uploaded successfully via SFTP.');
         return redirect()->back()->with('success', 'File uploaded successfully.');
     }
 
