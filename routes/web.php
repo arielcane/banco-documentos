@@ -15,4 +15,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('/', [FileController::class, 'index'])->name('files.index');
     Route::post('/upload', [FileController::class, 'store'])->name('files.store');
+    Route::get('/logs', [FileController::class, 'logs'])->name('files.logs');
 });

@@ -12,6 +12,11 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('files.index') }}">Banco de Documentos</a>
             
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="{{ route('files.index') }}">Documentos</a>
+                <a class="nav-link" href="{{ route('files.logs') }}">Logs</a>
+            </div>
+            
             <div class="navbar-nav ms-auto">
                 @auth
                     <span class="navbar-text me-3">Hola, {{ Auth::user()->name }}</span>
@@ -23,8 +28,6 @@
             </div>
         </div>
     </nav>
-
-    
 
     <main class="py-4">
         <div class="container">
