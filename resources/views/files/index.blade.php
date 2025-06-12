@@ -222,10 +222,10 @@
                                                class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-title="Descargar">
                                                 <i class="fas fa-download"></i>
                                             </a>
-                                            <a href="{{ Storage::url($file->file_path) }}" target="_blank" 
+                                            {{-- <a href="{{ route('files.view', $file) }}" target="_blank" 
                                                class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Ver en línea">
                                                 <i class="fas fa-eye"></i>
-                                            </a>
+                                            </a> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -237,14 +237,19 @@
                 <!-- Paginación -->
                 @if($files->hasPages())
                     <div class="card-footer bg-light py-2">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-2">
                             <div>
                                 <small class="text-muted">
                                     Página {{ $files->currentPage() }} de {{ $files->lastPage() }}
                                 </small>
                             </div>
                             <div>
-                                {{ $files->links() }}
+                                <nav>
+                                    <ul class="pagination pagination-sm mb-0 justify-content-center">
+                                        {{-- Laravel pagination links --}}
+                                        {!! $files->onEachSide(1)->links('pagination::bootstrap-5') !!}
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
