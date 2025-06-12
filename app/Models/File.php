@@ -14,5 +14,6 @@ class File extends Model
         'tags',
         'observations',
         'file_path',
+        'file_size'
     ];
 }

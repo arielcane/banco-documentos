@@ -12,18 +12,27 @@ class FileController extends Controller
 {
     public function index(Request $request)
     {
-        $query = File::query();
+        $query = File::query()->orderBy('created_at', 'desc');
 
         // Si hay una palabra clave, realiza la búsqueda
-        if ($request->has('keyword')) {
-            $query->where('name', 'like', "%{$request->keyword}%")
-                ->orWhere('tags', 'like', "%{$request->keyword}%")
-                ->orWhere('observations', 'like', "%{$request->keyword}%");
+        if ($request->has('keyword') && $request->keyword) {
+            $keyword = $request->keyword;
+            $query->where(function($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                  ->orWhere('tags', 'like', "%{$keyword}%")
+                  ->orWhere('observations', 'like', "%{$keyword}%");
+            });
         }
 
-        $files = $query->get();
+        // Paginación de 15 elementos por página
+        $files = $query->paginate(5)->appends($request->query());
 
-        return view('files.index', compact('files'));
+        // Estadísticas para el dashboard
+        $totalFiles = File::count();
+        $totalSize = File::whereNotNull('file_size')->sum('file_size') ?? 0;
+        $recentUploads = File::where('created_at', '>=', now()->subDays(7))->count();
+
+        return view('files.index', compact('files', 'totalFiles', 'totalSize', 'recentUploads'));
     }
 
     public function store(Request $request)
@@ -50,6 +59,8 @@ class FileController extends Controller
             'tags' => $request->tags,
             'observations' => $request->observations,
             'file_path' => $filePath,
+            'file_size' => $fileSize, // Agregar este campo si no existe
+            'original_name' => $originalName, // Agregar este campo si no existe
         ]);
 
         // ===== REGISTRAR EN EL LOG =====
@@ -70,7 +81,33 @@ class FileController extends Controller
             ]
         ]);
 
-        return redirect()->back()->with('success', 'File uploaded successfully.');
+        return redirect()->back()->with('success', 'Archivo subido exitosamente.');
+    }
+
+    // Método para descargar archivos y registrar en log
+    public function download(File $file, Request $request)
+    {
+        // Verificar que el archivo existe
+        if (!Storage::disk('public')->exists($file->file_path)) {
+            return redirect()->back()->withErrors(['file' => 'El archivo no existe.']);
+        }
+
+        // Registrar la descarga en el log
+        DocumentLog::create([
+            'user_id' => Auth::id(),
+            'file_id' => $file->id,
+            'action' => 'downloaded',
+            'document_name' => $file->name,
+            'file_path' => $file->file_path,
+            'file_size' => $file->file_size,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'metadata' => [
+                'download_type' => 'direct',
+            ]
+        ]);
+
+        return Storage::disk('public')->download($file->file_path, $file->original_name ?? $file->name . '.pdf');
     }
 
     public function search(Request $request)
@@ -83,12 +120,12 @@ class FileController extends Controller
                   ->orWhere('observations', 'like', "%{$request->keyword}%");
         }
 
-        $files = $query->get();
+        $files = $query->paginate(15);
 
         return view('files.search', compact('files'));
     }
 
-    // ===== NUEVO MÉTODO PARA MOSTRAR LOGS =====
+    // ===== MÉTODO PARA MOSTRAR LOGS =====
     public function logs(Request $request)
     {
         $query = DocumentLog::with(['user', 'file'])
