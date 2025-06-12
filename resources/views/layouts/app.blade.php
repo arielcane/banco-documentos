@@ -8,11 +8,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header class="bg-primary text-white py-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <h1 class="mb-0">@yield('header', 'Banco de documentos')</h1>
+            <a class="navbar-brand" href="{{ route('files.index') }}">Banco de Documentos</a>
+            
+            <div class="navbar-nav ms-auto">
+                @auth
+                    <span class="navbar-text me-3">Hola, {{ Auth::user()->name }}</span>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                    </form>
+                @endauth
+            </div>
         </div>
-    </header>
+    </nav>
+
+    
 
     <main class="py-4">
         <div class="container">
