@@ -392,7 +392,69 @@
                                     </td>
                                 </tr>
 
-                                {{-- Modal de confirmación para eliminar mejorado --}}
+                                
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Paginación mejorada -->
+                @if($files->hasPages())
+                    <div class="card-footer bg-light border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
+                            <div>
+                                <small class="text-muted">
+                                    Mostrando {{ $files->firstItem() }} - {{ $files->lastItem() }} de {{ number_format($files->total()) }} documentos
+                                </small>
+                            </div>
+                            <div>
+                                <nav aria-label="Navegación de documentos">
+                                    {{ $files->onEachSide(1)->links('pagination::bootstrap-5') }}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @else
+                <!-- Estado vacío mejorado -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <div class="mx-auto" style="width: 80px; height: 80px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-search text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                    <h5 class="text-muted mb-3">No se encontraron documentos</h5>
+                    <p class="text-muted mb-4">
+                        @if(request('keyword'))
+                            No hay documentos que coincidan con tu búsqueda "<strong>{{ request('keyword') }}</strong>".
+                        @else
+                            Aún no has subido ningún documento a tu biblioteca.
+                        @endif
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        @if(request('keyword'))
+                            <a href="{{ route('files.index') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-list me-1"></i>
+                                Ver todos los documentos
+                            </a>
+                        @else
+                            <button class="btn btn-primary" onclick="document.getElementById('file').click()">
+                                <i class="fas fa-plus me-1"></i>
+                                Subir mi primer documento
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+
+ {{-- Modal de confirmación para eliminar mejorado --}}
+
+@foreach($files as $file)
+                               
                                 @if(Auth::id() === $file->user_id || Auth::user()->is_admin ?? false)
                                     <div class="modal fade" id="deleteModal{{ $file->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $file->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -456,62 +518,9 @@
                                         </div>
                                     </div>
                                 @endif
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Paginación mejorada -->
-                @if($files->hasPages())
-                    <div class="card-footer bg-light border-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
-                            <div>
-                                <small class="text-muted">
-                                    Mostrando {{ $files->firstItem() }} - {{ $files->lastItem() }} de {{ number_format($files->total()) }} documentos
-                                </small>
-                            </div>
-                            <div>
-                                <nav aria-label="Navegación de documentos">
-                                    {{ $files->onEachSide(1)->links('pagination::bootstrap-5') }}
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @else
-                <!-- Estado vacío mejorado -->
-                <div class="text-center py-5">
-                    <div class="mb-4">
-                        <div class="mx-auto" style="width: 80px; height: 80px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-search text-muted" style="font-size: 2rem;"></i>
-                        </div>
-                    </div>
-                    <h5 class="text-muted mb-3">No se encontraron documentos</h5>
-                    <p class="text-muted mb-4">
-                        @if(request('keyword'))
-                            No hay documentos que coincidan con tu búsqueda "<strong>{{ request('keyword') }}</strong>".
-                        @else
-                            Aún no has subido ningún documento a tu biblioteca.
-                        @endif
-                    </p>
-                    <div class="d-flex gap-2 justify-content-center flex-wrap">
-                        @if(request('keyword'))
-                            <a href="{{ route('files.index') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-list me-1"></i>
-                                Ver todos los documentos
-                            </a>
-                        @else
-                            <button class="btn btn-primary" onclick="document.getElementById('file').click()">
-                                <i class="fas fa-plus me-1"></i>
-                                Subir mi primer documento
-                            </button>
-                        @endif
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
+@endforeach
+
+
 
 <!-- JavaScript mejorado -->
 <script>
