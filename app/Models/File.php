@@ -14,5 +14,16 @@ class File extends Model
         'tags',
         'observations',
         'file_path',
+        'file_size',
+        'original_name',
+        'user_id'
     ];
+
+    /**
+     * Relación con el usuario que subió el archivo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
