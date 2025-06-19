@@ -44,9 +44,9 @@
                             <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
                         </form>
                         
-                        <div class="text-center mt-3">
+                        {{-- <div class="text-center mt-3">
                             <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate aquí</a></p>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
