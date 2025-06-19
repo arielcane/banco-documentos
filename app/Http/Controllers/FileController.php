@@ -48,7 +48,6 @@ class FileController extends Controller
         try {
             $filePath = $request->file('file')->store('uploads', 'public');
             $fileSize = $request->file('file')->getSize();
-            $originalName = $request->file('file')->getClientOriginalName();
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['file' => 'Failed to upload file: ' . $e->getMessage()]);
         }
@@ -60,7 +59,6 @@ class FileController extends Controller
             'observations' => $request->observations,
             'file_path' => $filePath,
             'file_size' => $fileSize,
-            'original_name' => $originalName,
             'user_id' => Auth::id(), // Agregar el ID del usuario autenticado
         ]);
 
@@ -75,7 +73,6 @@ class FileController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'metadata' => [
-                'original_filename' => $originalName,
                 'tags' => $request->tags,
                 'observations' => $request->observations,
                 'file_extension' => $request->file('file')->getClientOriginalExtension(),
