@@ -12,7 +12,7 @@ class FileController extends Controller
 {
     public function index(Request $request)
     {
-        $query = File::query()->orderBy('created_at', 'desc');
+        $query = File::with('user')->orderBy('created_at', 'desc');
 
         // Si hay una palabra clave, realiza la búsqueda
         if ($request->has('keyword') && $request->keyword) {
@@ -59,8 +59,9 @@ class FileController extends Controller
             'tags' => $request->tags,
             'observations' => $request->observations,
             'file_path' => $filePath,
-            'file_size' => $fileSize, // Agregar este campo si no existe
-            'original_name' => $originalName, // Agregar este campo si no existe
+            'file_size' => $fileSize,
+            'original_name' => $originalName,
+            'user_id' => Auth::id(), // Agregar el ID del usuario autenticado
         ]);
 
         // ===== REGISTRAR EN EL LOG =====
@@ -110,9 +111,44 @@ class FileController extends Controller
         return Storage::disk('public')->download($file->file_path, $file->original_name ?? $file->name . '.pdf');
     }
 
+    // Método para eliminar archivos
+    public function destroy(File $file, Request $request)
+    {
+        try {
+            // Verificar si el archivo físico existe y eliminarlo
+            if (Storage::disk('public')->exists($file->file_path)) {
+                Storage::disk('public')->delete($file->file_path);
+            }
+
+            // Registrar la eliminación en el log antes de borrar el registro
+            DocumentLog::create([
+                'user_id' => Auth::id(),
+                'file_id' => $file->id,
+                'action' => 'deleted',
+                'document_name' => $file->name,
+                'file_path' => $file->file_path,
+                'file_size' => $file->file_size,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'metadata' => [
+                    'deleted_by' => Auth::user()->name,
+                    'original_filename' => $file->original_name,
+                ]
+            ]);
+
+            // Eliminar el registro de la base de datos
+            $file->delete();
+
+            return redirect()->back()->with('success', 'Archivo eliminado exitosamente.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['delete' => 'Error al eliminar el archivo: ' . $e->getMessage()]);
+        }
+    }
+
     public function search(Request $request)
     {
-        $query = File::query();
+        $query = File::with('user');
 
         if ($request->has('keyword')) {
             $query->where('name', 'like', "%{$request->keyword}%")

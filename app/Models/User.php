@@ -28,4 +28,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relación con los archivos subidos por el usuario
+     */
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }
