@@ -145,28 +145,25 @@
                 </div>
                 
                 <div class="row g-4 mt-2">
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <label for="observations" class="form-label fw-semibold">
                             <i class="fas fa-comment-alt me-2 text-warning"></i>
                             Observaciones
                         </label>
                         <textarea name="observations" id="observations" 
                                   class="form-control @error('observations') is-invalid @enderror" 
-                                  rows="3" 
+                                  rows="11" 
                                   placeholder="Describe el contenido del documento o agrega notas importantes...">{{ old('observations') }}</textarea>
                         @error('observations')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
-                
-                <div class="row g-4 mt-2">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <label for="file" class="form-label fw-semibold">
                             <i class="fas fa-file-pdf me-2 text-danger"></i>
                             Archivo PDF <span class="text-danger">*</span>
                         </label>
-                        <div class="upload-zone">
+                        <div class="upload-zone mb-3">
                             <input type="file" name="file" id="file" 
                                    class="form-control form-control-lg @error('file') is-invalid @enderror" 
                                    accept="application/pdf" required>
@@ -182,9 +179,7 @@
                         @error('file')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center align-items-start" style="height: 48px;">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center" style="height: 48px;">
                             <i class="fas fa-cloud-upload-alt me-2"></i>
                             <span>Subir Documento</span>
                         </button>
