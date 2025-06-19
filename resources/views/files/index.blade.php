@@ -184,7 +184,7 @@
                         @enderror
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center align-items-start" style="height: 48px;">
                             <i class="fas fa-cloud-upload-alt me-2"></i>
                             <span>Subir Documento</span>
                         </button>
@@ -287,10 +287,10 @@
                         <thead>
                             <tr>
                                 <th class="border-0 ps-4">Documento</th>
-                                <th class="border-0">Autor</th>
                                 <th class="border-0">Etiquetas</th>
                                 <th class="border-0">Observaciones</th>
                                 <th class="border-0">Fecha</th>
+                                <th class="border-0">Autor</th>
                                 <th class="border-0 text-center pe-4">Acciones</th>
                             </tr>
                         </thead>
@@ -314,17 +314,6 @@
                                                         <i class="fas fa-weight me-1"></i>{{ number_format($file->file_size / 1024, 1) }} KB
                                                     </small>
                                                 @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar me-2">
-                                                {{ substr($file->user->name ?? 'U', 0, 1) }}
-                                            </div>
-                                            <div>
-                                                <div class="fw-semibold">{{ $file->user->name ?? 'Usuario eliminado' }}</div>
-                                                <small class="text-muted">{{ $file->user->email ?? '' }}</small>
                                             </div>
                                         </div>
                                     </td>
@@ -370,6 +359,17 @@
                                                 <small class="badge bg-light text-dark">
                                                     {{ $file->created_at->diffForHumans() }}
                                                 </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-2">
+                                                {{ substr($file->user->name ?? 'U', 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ $file->user->name ?? 'Usuario eliminado' }}</div>
+                                                <small class="text-muted">{{ $file->user->email ?? '' }}</small>
                                             </div>
                                         </div>
                                     </td>
